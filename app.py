@@ -1,6 +1,7 @@
 import streamlit as st
 from src.extract_text import extract_text
 from src.chunker import chunk_pages
+from src.embeddings import create_embedding
 
 st.set_page_config(page_title="Responsible AI Policy Assistant")
 
@@ -13,4 +14,7 @@ uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 if uploaded_file:
     with st.spinner("Processing document ..."):
             pages = extract_text(uploaded_file)
-            chunk_pages(pages)
+            chunks = chunk_pages(pages)
+            for chunk in chunks:
+                  chunk["embedding"] = create_embedding(chunk["text"])
+            print(chunk)
