@@ -2,6 +2,7 @@ import streamlit as st
 from src.extract_text import extract_text
 from src.chunker import chunk_pages
 from src.embeddings import create_embedding
+from src.vector_store import store_chunks
 
 st.set_page_config(page_title="Responsible AI Policy Assistant")
 
@@ -15,6 +16,11 @@ if uploaded_file:
     with st.spinner("Processing document ..."):
             pages = extract_text(uploaded_file)
             chunks = chunk_pages(pages)
+
             for chunk in chunks:
                   chunk["embedding"] = create_embedding(chunk["text"])
+
+            store_chunks(chunks, uploaded_file.name)
+
+    st.success("Document indexed successfully.")
             
