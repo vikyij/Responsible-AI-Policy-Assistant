@@ -1,14 +1,10 @@
-import os
-from dotenv import load_dotenv
-from openai import OpenAI
+from sentence_transformers import SentenceTransformer
 
-load_dotenv()
+model = SentenceTransformer("BAAI/bge-small-en-v1.5")
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def create_embedding(text):
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text
-    )
-    return response.data[0].embedding
+    embedding = model.encode(text, normalize_embeddings=True)
+    return embedding.tolist()
+
+

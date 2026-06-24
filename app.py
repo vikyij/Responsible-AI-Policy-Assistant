@@ -17,4 +17,4 @@ if uploaded_file:
             chunks = chunk_pages(pages)
             for chunk in chunks:
                   chunk["embedding"] = create_embedding(chunk["text"])
-            print(chunk)
+            
