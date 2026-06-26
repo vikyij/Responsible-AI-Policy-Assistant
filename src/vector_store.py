@@ -40,3 +40,8 @@ def retrieve_chunks(question, create_embedding, top_k):
                 "chunk": stored_chunks[idx]
             })
     return results
+
+def reset_store():
+    global index, stored_chunks
+    index = faiss.IndexFlatIP(384)
+    stored_chunks = []
