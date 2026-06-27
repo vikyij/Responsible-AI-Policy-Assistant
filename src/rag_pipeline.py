@@ -28,3 +28,25 @@ def answer_question(question):
     ]
 
     return answer, sources
+
+def generate_responsible_ai_checklist():
+    checklist_question= """
+
+    Generate a Responsible AI checklist from this document.
+
+    Assess the document under these categories:
+    1. Fairness and bias
+    2. Transparency and explainability
+    3. Accountability and ownership
+    4. Privacy and data protection
+    5. Human oversight
+    6. Security and robustness
+    7. Monitoring after deployment
+    8. Incident response
+
+    For each category, return:
+    - Status: Covered, Partially covered, or Missing
+    - Evidence from the document
+    - Recommendation
+    """
+    return answer_question(checklist_question)
