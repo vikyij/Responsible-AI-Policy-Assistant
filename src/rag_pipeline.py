@@ -50,3 +50,62 @@ def generate_responsible_ai_checklist():
     - Recommendation
     """
     return answer_question(checklist_question)
+
+def perform_gap_analysis():
+    categories = [
+        "fairness and bias mitigation",
+        "transparency and explainability",
+        "accountability and ownership",
+        "privacy and data protection",
+        "human oversight",
+        "security and robustness",
+        "monitoring after deployment",
+        "incident response",
+        "documentation and auditability",
+        "user rights, appeals, or contestability"
+    ]
+
+    all_evidence = []
+    sources = []
+
+    for category in categories:
+        retrieved_chunks = retrieve_chunks(
+            question=f"What does the document say about {category}?",
+            create_embedding=create_embedding,
+            top_k=3
+        )
+
+        evidence = "\n\n".join([
+            f"Page {item['chunk']['page']}:\n{item['chunk']['text']}"
+            for item in retrieved_chunks
+        ])
+
+        all_evidence.append(f"=== {category.upper()} ===\n{evidence}")
+        sources.extend( {
+            "page": item["chunk"]["page"],
+            "document": item["chunk"]["document"],
+            "text": item["chunk"]["text"],
+            "score": item["score"]
+        }
+        for item in retrieved_chunks)
+   
+
+    context = "\n\n".join(all_evidence)
+
+    question = """
+        Perform a Responsible AI gap analysis using the provided evidence.
+
+        For each area, return:
+            - Coverage: Strong, Partial, Weak, or Missing
+            - Evidence
+            - Gap identified
+            - Recommendation
+
+        End with:
+            - Overall assessment
+            - Top 3 most important gaps to fix
+        """
+
+    answer = generate_answer(question, context)
+
+    return answer, sources
