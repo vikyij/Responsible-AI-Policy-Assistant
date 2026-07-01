@@ -81,12 +81,10 @@ if st.session_state.document_indexed:
             st.write(source["text"][:500])
             st.caption(f"Similarity score: {source['score']:.4f}")
 
-    st.subheader("Responsible AI Checklist")
     if st.button("Generate Responsible AI Checklist"):
         with st.spinner("Generating checklist..."):
             checklist_answer, checklist_sources = generate_responsible_ai_checklist()
 
-        st.subheader("Checklist")
         st.write(checklist_answer)
 
         st.subheader("Checklist Sources")
