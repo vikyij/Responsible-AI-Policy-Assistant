@@ -3,7 +3,7 @@ from src.extract_text import extract_text
 from src.chunker import chunk_pages
 from src.embeddings import create_embedding
 from src.vector_store import store_chunks, reset_store
-from src.rag_pipeline import answer_question, generate_responsible_ai_checklist
+from src.rag_pipeline import answer_question, generate_responsible_ai_checklist, perform_gap_analysis
 
 if "document_indexed" not in st.session_state:
     st.session_state.document_indexed = False
@@ -96,3 +96,12 @@ if st.session_state.document_indexed:
             st.caption(f"Similarity score: {source['score']:.4f}")
 
             
+    st.subheader("Responsible AI Gap Analysis")
+
+    if st.button("Generate Gap Analysis"):
+        with st.spinner("Generating gap analysis..."):
+            gap_answer, gap_sources = perform_gap_analysis()
+
+        st.subheader("Gap Analysis")
+        st.write(gap_answer)
+
