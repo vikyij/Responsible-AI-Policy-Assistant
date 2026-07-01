@@ -3,19 +3,30 @@ from src.chat_model import generate_answer
 from src.embeddings import create_embedding
 
 
-def answer_question(question):
+RESPONSIBLE_AI_CATEGORIES = [
+    "fairness and bias mitigation",
+    "transparency and explainability",
+    "accountability and ownership",
+    "privacy and data protection",
+    "human oversight",
+    "security and robustness",
+    "monitoring after deployment",
+    "incident response",
+    "documentation and auditability",
+    "user rights, appeals, or contestability"
+]
+
+def retrieve_context(query, top_k=5):
     retrieved_chunks = retrieve_chunks(
-        question=question,
+        question=query,
         create_embedding=create_embedding,
-        top_k=5
+        top_k=top_k
     )
 
     context = "\n\n".join([
         f"Source {i + 1} | Page {item['chunk']['page']}:\n{item['chunk']['text']}"
         for i, item in enumerate(retrieved_chunks)
     ])
-
-    answer = generate_answer(question, context)
 
     sources = [
         {
@@ -27,9 +38,33 @@ def answer_question(question):
         for item in retrieved_chunks
     ]
 
-    return answer, sources
+    return context, sources
+
+def answer_question(question):
+        context, sources = retrieve_context(question, top_k=5)
+        answer = generate_answer(question, context)
+
+        return answer, sources
+
+def retrieve_context_by_categories(categories, top_k=3):
+    all_context_parts = []
+    all_sources = []
+
+    for category in categories:
+        query=f"What does the document say about {category}?"
+
+        context, sources = retrieve_context(query, top_k)
+
+        all_context_parts.append(f"=== {category.upper()} ===\n{context}")
+        all_sources.extend(sources)
+   
+    full_context = "\n\n".join(all_context_parts)
+    return full_context, all_sources
+     
 
 def generate_responsible_ai_checklist():
+    full_context, all_sources = retrieve_context_by_categories(RESPONSIBLE_AI_CATEGORIES, top_k=3)
+
     checklist_question= """
 
     Generate a Responsible AI checklist from this document.
@@ -49,63 +84,38 @@ def generate_responsible_ai_checklist():
     - Evidence from the document
     - Recommendation
     """
-    return answer_question(checklist_question)
+    
+    answer = generate_answer(checklist_question, full_context)
+    return answer, all_sources
 
 def perform_gap_analysis():
-    categories = [
-        "fairness and bias mitigation",
-        "transparency and explainability",
-        "accountability and ownership",
-        "privacy and data protection",
-        "human oversight",
-        "security and robustness",
-        "monitoring after deployment",
-        "incident response",
-        "documentation and auditability",
-        "user rights, appeals, or contestability"
-    ]
-
-    all_evidence = []
-    sources = []
-
-    for category in categories:
-        retrieved_chunks = retrieve_chunks(
-            question=f"What does the document say about {category}?",
-            create_embedding=create_embedding,
-            top_k=3
-        )
-
-        evidence = "\n\n".join([
-            f"Page {item['chunk']['page']}:\n{item['chunk']['text']}"
-            for item in retrieved_chunks
-        ])
-
-        all_evidence.append(f"=== {category.upper()} ===\n{evidence}")
-        sources.extend( {
-            "page": item["chunk"]["page"],
-            "document": item["chunk"]["document"],
-            "text": item["chunk"]["text"],
-            "score": item["score"]
-        }
-        for item in retrieved_chunks)
-   
-
-    context = "\n\n".join(all_evidence)
+    full_context, all_sources = retrieve_context_by_categories(RESPONSIBLE_AI_CATEGORIES, top_k=3)
 
     question = """
-        Perform a Responsible AI gap analysis using the provided evidence.
+      Perform a Responsible AI gap analysis using the provided document evidence.
 
-        For each area, return:
-            - Coverage: Strong, Partial, Weak, or Missing
-            - Evidence
-            - Gap identified
-            - Recommendation
+        Return your answer in the following format:
+
+        ### 1. Fairness and Bias Mitigation
+            - Coverage:
+            - Evidence:
+            - Gap Identified:
+            - Recommendation:
+
+        ### 2. Transparency and Explainability
+        ...
+
+        Repeat this structure for all categories.
+
+        Do not output a blank template.
+        Do not repeat the field names before the analysis begins.
+        Start immediately with the first category.
 
         End with:
             - Overall assessment
-            - Top 3 most important gaps to fix
+            - Top 3 most important gaps to fix.
         """
 
-    answer = generate_answer(question, context)
+    answer = generate_answer(question, full_context)
 
-    return answer, sources
+    return answer, all_sources
