@@ -1,47 +1,58 @@
-import faiss
-import numpy as np
+import os
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from src.embeddings import create_embedding
 
-embedding_dimension = 384
 
-index = faiss.IndexFlatIP(embedding_dimension)
+load_dotenv()
 
-stored_chunks = []
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
+index_name = os.getenv("PINECONE_INDEX_NAME")
+index=pc.Index(index_name)
+
+APP_NAMESPACE = "current_document"
 
 def store_chunks(chunks, document_name):
     vectors = []
 
     for i, chunk in enumerate(chunks):
-        vectors.append(chunk["embedding"])
-
-        stored_chunks.append({
+        vectors.append({
             "id": f"{document_name}-{i}",
-            "text": chunk["text"],
-            "page": chunk["page"],
-            "document": document_name
+            "values": chunk["embedding"],
+            "metadata": {
+                "text": chunk["text"],
+                "page": chunk["page"],
+                "document": document_name
+            }
         })
 
-    vectors = np.array(vectors).astype("float32")
 
-    index.add(vectors)
+    index.upsert(vectors=vectors, namespace=APP_NAMESPACE)
 
-def retrieve_chunks(question, create_embedding, top_k):
+def retrieve_chunks(question, top_k):
     question_embedding = create_embedding(question)
-    question_vector = np.array([question_embedding]).astype("float32")
 
-    scores, indices = index.search(question_vector, top_k)
+    results = index.query(
+        vector=question_embedding,
+        top_k=top_k,
+        include_metadata=True,
+        namespace=APP_NAMESPACE
+    )
 
-    results = []
+    retrieved_chunks = []
 
-    for score, idx in zip(scores[0], indices[0]):
-        if idx != -1:
-            results.append({
-                "score": float(score),
-                "chunk": stored_chunks[idx]
-            })
-    return results
+    for match in results["matches"]:
+        retrieved_chunks.append({
+            "score": float(match["score"]),
+            "chunk": {
+                "text": match["metadata"]["text"],
+                "page": match["metadata"]["page"],
+                "document": match["metadata"]["document"]
+            }
+        })
+
+    return retrieved_chunks
 
 def reset_store():
-    global index, stored_chunks
-    index = faiss.IndexFlatIP(384)
-    stored_chunks = []
+    index.delete(delete_all=True, namespace=APP_NAMESPACE)
