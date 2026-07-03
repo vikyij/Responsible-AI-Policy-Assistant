@@ -1,6 +1,5 @@
 from src.vector_store import retrieve_chunks
 from src.chat_model import generate_answer
-from src.embeddings import create_embedding
 
 
 RESPONSIBLE_AI_CATEGORIES = [
@@ -19,7 +18,6 @@ RESPONSIBLE_AI_CATEGORIES = [
 def retrieve_context(query, top_k=5):
     retrieved_chunks = retrieve_chunks(
         question=query,
-        create_embedding=create_embedding,
         top_k=top_k
     )
 

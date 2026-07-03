@@ -7,3 +7,4 @@ torchvision
 faiss-cpu
 numpy
 huggingface_hub
+pinecone
