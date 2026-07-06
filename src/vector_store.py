@@ -55,4 +55,7 @@ def retrieve_chunks(question, top_k):
     return retrieved_chunks
 
 def reset_store():
-    index.delete(delete_all=True, namespace=APP_NAMESPACE)
+    try:
+        index.delete(delete_all=True, namespace=APP_NAMESPACE)
+    except Exception:
+        pass
