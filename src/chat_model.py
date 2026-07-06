@@ -1,12 +1,17 @@
-import os
 from dotenv import load_dotenv
-from huggingface_hub import InferenceClient
+# from huggingface_hub import InferenceClient
+from openai import OpenAI
 
 load_dotenv()
 
-client = InferenceClient(
-    api_key=os.getenv("HF_TOKEN")
+client = OpenAI(
+    base_url="http://localhost:11434/v1",
+    api_key="ollama"
 )
+
+# client = InferenceClient(
+#     api_key=os.getenv("HF_TOKEN")
+# )
 
 
 def generate_answer(question, context):
@@ -25,7 +30,7 @@ def generate_answer(question, context):
 
 
     response = client.chat.completions.create(
-        model="Qwen/Qwen2.5-7B-Instruct",
+        model="qwen2.5:7b",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
