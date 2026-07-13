@@ -1,15 +1,11 @@
-import os
-from dotenv import load_dotenv
 from pinecone import Pinecone
+from src.config import PINECONE_API_KEY, PINECONE_INDEX_NAME
 from src.embeddings import create_embedding
 
 
-load_dotenv()
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-
-index_name = os.getenv("PINECONE_INDEX_NAME")
-index=pc.Index(index_name)
+index = pc.Index(PINECONE_INDEX_NAME)
 
 APP_NAMESPACE = "current_document"
 
