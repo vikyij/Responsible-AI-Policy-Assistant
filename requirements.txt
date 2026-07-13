@@ -1,4 +1,7 @@
 streamlit
+fastapi
+uvicorn[standard]
+python-multipart
 pypdf
 openai
 python-dotenv

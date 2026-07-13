@@ -1,17 +1,11 @@
-from dotenv import load_dotenv
-# from huggingface_hub import InferenceClient
 from openai import OpenAI
+from src.config import LLM_MAX_TOKENS, OLLAMA_BASE_URL, OLLAMA_MODEL
 
-load_dotenv()
 
 client = OpenAI(
-    base_url="http://localhost:11434/v1",
+    base_url=OLLAMA_BASE_URL,
     api_key="ollama"
 )
-
-# client = InferenceClient(
-#     api_key=os.getenv("HF_TOKEN")
-# )
 
 
 def generate_answer(question, context):
@@ -30,12 +24,12 @@ def generate_answer(question, context):
 
 
     response = client.chat.completions.create(
-        model="qwen2.5:7b",
+        model=OLLAMA_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        max_tokens=500
+        max_tokens=LLM_MAX_TOKENS
     )
 
     return response.choices[0].message.content
