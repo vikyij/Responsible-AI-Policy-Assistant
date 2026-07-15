@@ -65,7 +65,7 @@ def generate_responsible_ai_checklist():
 
     checklist_question= """
 
-    Generate a Responsible AI checklist from this document.
+    Generate a concise Responsible AI coverage checklist from this document.
 
     Assess the document under these categories:
     1. Fairness and bias
@@ -79,8 +79,11 @@ def generate_responsible_ai_checklist():
 
     For each category, return:
     - Status: Covered, Partially covered, or Missing
-    - Evidence from the document
-    - Recommendation
+    - Evidence from the document: one short sentence explaining the coverage
+
+    Do not include a title, introduction, summary, or conclusion.
+    Start directly with the first category: "1. Fairness and bias".
+    Do not include recommendations. Keep each category brief so the checklist can be scanned in 30 seconds.
     """
     
     answer = generate_answer(checklist_question, full_context)
