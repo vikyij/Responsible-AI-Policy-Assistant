@@ -81,6 +81,18 @@ def generate_responsible_ai_checklist():
     - Status: Covered, Partially covered, or Missing
     - Evidence from the document: one short sentence explaining the coverage
 
+    Use this exact format for every category:
+    1. Fairness and bias
+    Status: Missing
+    Evidence: No explicit evidence found in the retrieved policy passages.
+
+    Rules:
+    - Mark Covered only when the provided evidence explicitly addresses the category.
+    - Mark Partially covered only when the provided evidence mentions the category but lacks clear controls, ownership, or process detail.
+    - Mark Missing when there is no explicit Responsible AI evidence for that category.
+    - Do not infer coverage from vague wording, generic filler text, names, or unrelated phrases.
+    - If the document is unrelated to Responsible AI policy, most or all categories should be Missing.
+
     Do not include a title, introduction, summary, or conclusion.
     Start directly with the first category: "1. Fairness and bias".
     Do not include recommendations. Keep each category brief so the checklist can be scanned in 30 seconds.
