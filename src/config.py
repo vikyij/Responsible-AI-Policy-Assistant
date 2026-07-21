@@ -18,7 +18,7 @@ CORS_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CORS_ORIGINS",
-        "http://localhost:3000,http://127.0.0.1:3000",
+        "http://localhost:3000,http://127.0.0.1:3000, https://ai-policy-assistant-1l1a.vercel.app/",
     ).split(",")
     if origin.strip()
 ]
