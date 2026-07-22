@@ -1,10 +1,10 @@
 from openai import OpenAI
-from src.config import LLM_MAX_TOKENS, OLLAMA_BASE_URL, OLLAMA_MODEL
+from src.config import LLM_MAX_TOKENS, LLM_BASE_URL, LLM_MODEL, LLM_API_KEY
 
 
 client = OpenAI(
-    base_url=OLLAMA_BASE_URL,
-    api_key="ollama"
+    base_url=LLM_BASE_URL,
+    api_key=LLM_API_KEY
 )
 
 
@@ -24,7 +24,7 @@ def generate_answer(question, context):
 
 
     response = client.chat.completions.create(
-        model=OLLAMA_MODEL,
+        model=LLM_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
