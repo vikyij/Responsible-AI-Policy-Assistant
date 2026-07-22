@@ -5,4 +5,5 @@ pypdf
 openai
 python-dotenv
 huggingface-hub
+numpy
 pinecone
