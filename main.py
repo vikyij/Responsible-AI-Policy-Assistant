@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from src.chunker import chunk_pages
-from src.config import APP_NAME, CORS_ORIGINS, OLLAMA_MODEL, PINECONE_INDEX_NAME
+from src.config import APP_NAME, CORS_ORIGINS, LLM_MODEL, LLM_PROVIDER, PINECONE_INDEX_NAME
 from src.embeddings import create_embedding
 from src.extract_text import extract_text
 from src.rag_pipeline import (
@@ -54,6 +54,7 @@ class UploadResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     app: str
+    provider: str
     model: str
     pinecone_index: str | None
 
@@ -74,7 +75,8 @@ def health_check():
     return {
         "status": "ok",
         "app": APP_NAME,
-        "model": OLLAMA_MODEL,
+        "provider": LLM_PROVIDER,
+        "model": LLM_MODEL,
         "pinecone_index": PINECONE_INDEX_NAME,
     }
 
