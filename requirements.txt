@@ -1,13 +1,8 @@
-streamlit
 fastapi
 uvicorn[standard]
 python-multipart
 pypdf
 openai
 python-dotenv
-sentence-transformers  
-torchvision
-faiss-cpu
-numpy
-huggingface_hub
+huggingface-hub
 pinecone

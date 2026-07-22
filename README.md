@@ -12,7 +12,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env` and fill in your Pinecone values:
+Copy `.env.example` to `.env` and fill in your Pinecone and Hugging Face values:
 
 ```bash
 cp .env.example .env
@@ -20,9 +20,11 @@ cp .env.example .env
 
 Your Pinecone index must use dimension `384` for `BAAI/bge-small-en-v1.5`.
 
+Embeddings are created through the Hugging Face Inference API.
+
 ## Local Model
 
-Start Ollama and make sure the configured model is available:
+For local text generation, start Ollama and make sure the configured model is available:
 
 ```bash
 ollama pull qwen2.5:7b
